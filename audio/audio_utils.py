@@ -1,7 +1,9 @@
 import pyaudio
+import configparser
+from res import settings
 
 # 有効なインプットデバイスリストを取得する関数
-def get_valid_input_devices():
+def get_valid_input_devices() -> list:
     valid_devices = []
     audio = pyaudio.PyAudio()
     device_count = audio.get_device_count()
@@ -20,7 +22,7 @@ def get_valid_input_devices():
 
 
 # 有効なインプットデバイスリストを表示する関数
-def display_valid_input_devices(valid_devices):
+def display_valid_input_devices(valid_devices:list) -> None:
     for device_info in valid_devices:
         print(
             f"DeviceIndex: {device_info['index']}, DeviceName: {device_info['name']}, 入力チャンネル数: {device_info['maxInputChannels']}"
@@ -28,21 +30,16 @@ def display_valid_input_devices(valid_devices):
 
 
 # オーディオストリームを作成する関数
-def create_audio_stream(selected_device_index, callback):
-    RATE = 16000
-    CHUNK = 480
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1
-
+def create_audio_stream(inifile:configparser.ConfigParser, selected_device_index:int, callback) -> pyaudio.PyAudio.Stream:
     audio = pyaudio.PyAudio()
     stream = audio.open(
-        format=FORMAT,
-        channels=CHANNELS,
-        rate=RATE,
-        input=True,
-        input_device_index=selected_device_index,
-        frames_per_buffer=CHUNK,
-        stream_callback=callback,
+        format = settings.format,
+        channels = inifile.getint("audio","channels"),
+        rate = inifile.getint("audio","rate"),
+        input = inifile.getboolean("audio","input_flag"),
+        input_device_index = selected_device_index,
+        frames_per_buffer = inifile.getint("audio","chunk"),
+        stream_callback = callback,
     )
 
     return stream
