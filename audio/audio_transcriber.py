@@ -9,7 +9,8 @@ import configparser
 from . import (
     audio_utils,
     vad_utils,
-    whisper_utils
+    whisper_utils,
+    wave
 )
 
 class AudioTranscriber:
@@ -17,6 +18,7 @@ class AudioTranscriber:
         self.inifile = inifile
         self.model_wrapper = whisper_utils.WhisperModelWrapper(inifile=self.inifile)
         self.vad_wrapper = vad_utils.VadWrapper(inifile=self.inifile)
+        self.wave = wave.Wave(inifile=self.inifile)
         self.silent_chunks = 0  # just count silent variable
         self.speech_buffer = []
         self.audio_queue = queue.Queue()
