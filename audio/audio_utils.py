@@ -20,14 +20,12 @@ def get_valid_input_devices() -> list:
 
     return valid_devices
 
-
 # 有効なインプットデバイスリストを表示する関数
 def display_valid_input_devices(valid_devices:list) -> None:
     for device_info in valid_devices:
         print(
             f"DeviceIndex: {device_info['index']}, DeviceName: {device_info['name']}, 入力チャンネル数: {device_info['maxInputChannels']}"
         )
-
 
 # オーディオストリームを作成する関数
 def create_audio_stream(inifile:configparser.ConfigParser, selected_device_index:int, callback) -> pyaudio.PyAudio.Stream:
