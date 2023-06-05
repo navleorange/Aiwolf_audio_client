@@ -33,25 +33,29 @@ class GUI():
 
 
         self.role_background = "#DCDCDC"
+        self.inform_background = "#C0C0C0"
         self.role_frame = sg.Frame(title="",
                                    layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.unidentified_path + "use.png", background_color="#D3D3D3")],
-                                   [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))]
+                                   [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))],
+                                   [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20), background_color=self.role_background)],
                                    ],
+                            pad=((80,0),(0,0)),
                             background_color=self.role_background,
                             relief=sg.RELIEF_SUNKEN
                             )
         self.comment_frame = sg.Frame(title="",
                                       layout=[ [sg.Text(key=self.comment_title, text="あなたの発言履歴",font=("Arial",20)) ],
-                                       [sg.Multiline(key=self.comments, default_text="", text_color="#FF0000", disabled=True ,size=(40,20), font=("Arial",20), background_color="#C0C0C0")]
+                                       [sg.Multiline(key=self.comments, default_text="", text_color="#FF0000", disabled=True ,size=(40,20), font=("Arial",20), background_color=self.inform_background)]
                                        ],
                             element_justification="center",
                             relief=sg.RELIEF_SUNKEN
                             )
         self.gamemaster_frame = sg.Frame(title="",
                                          layout=[
-                                             [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20))],
-                                             [sg.Button(key=self.role_change, button_text="役職を変える", pad=((210,0),(0,0)), size=(9,2))]
+                                             [sg.Text(key=self.action, text="ゲームマスターからのお知らせ",font=("Arial",20))],
+                                             [sg.Multiline(key=self.action, default_text="",font=("Arial",20),size=(28,20),background_color=self.inform_background)]
                                          ],
+                                         element_justification="center",
                                          relief=sg.RELIEF_SUNKEN
                                     )
         
@@ -72,7 +76,7 @@ class GUI():
         ]
     
     def open_window(self) -> None:
-        self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,500) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
+        self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,600) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
     
     def update_role_image(self) -> None:
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
