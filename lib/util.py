@@ -5,6 +5,7 @@ import configparser
 import random
 import datetime
 import time
+import glob
 
 def read_text(path:str):
     with open(path,"r",encoding="utf-8") as f:
@@ -52,3 +53,7 @@ def last_resort() -> None:
 
     if not env_path in sys.path:
         sys.path.append(env_path)
+
+def select_unidentified(unidentified_path:str):
+    unidentified_images = glob.glob(unidentified_path)
+    return random_select(unidentified_images)

@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import configparser
 from PIL import Image #Pillow
+from lib import util
 
 class GUI():
     def __init__(self, inifile:configparser.ConfigParser) -> None:
@@ -12,16 +13,25 @@ class GUI():
         self.action = "action"
         self.hide_flag = False
         self.comment_list = []
+
         self.inifile = inifile
         self.image_path = self.inifile.get("gui","image_path")
+        self.unidentified_path = self.inifile.get("gui","unidentified_path")
 
         sg.theme("DarkBrown4")
         #TealMono
         #GreenTan
 
+        print("-----result-------")
+        print(self.image_path)
+        print(self.unidentified_path)
+        anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
+        self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
+
+
         self.role_background = "#DCDCDC"
         self.role_frame = sg.Frame(title="",
-                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.inifile.get("gui","image_path") + "my_role.png")],
+                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.image_path + "test.png")],
                                    [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))]
                                    ],
                             background_color=self.role_background,
@@ -35,10 +45,10 @@ class GUI():
                             relief=sg.RELIEF_SUNKEN
                             )
         self.gamemaster_frame = sg.Frame(title="",
-                                         layout=[
-                                             [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20)) ],
+                                         layout=[[sg.Text(key=self.action, text="現在の行動：",font=("Arial",20)) ]
                                          ],
-                                        )
+                                         relief=sg.RELIEF_SUNKEN
+                                    )
         
         self.left_column = sg.Column([
             [self.role_frame],
@@ -55,12 +65,6 @@ class GUI():
         self.layout = [
             [self.game_column]
         ]
-        
-        # self.layout = [
-        #     [self.role_frame, self.comment_frame],
-        #     [self.gamemaster_frame],
-        #     [sg.Button('Exit', size=(8,2))]
-        # ]
     
     def open_window(self) -> None:
         self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,500) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
@@ -77,14 +81,14 @@ class GUI():
 
         if not self.hide_flag:
             self.window[self.role_text].update("あなたの役職\n" + "?????????")
-            self.window[self.role_image].update(self.inifile.get("gui","image_path") + "rhide.png")
+            self.window[self.role_image].update(self.image_path + "rhide.png")
 
             # prepare display
             self.window[self.hide_button].update(text="役職を表示する")
             self.hide_flag = not self.hide_flag
         else:
             self.window[self.role_text].update("あなたの役職\n" + "村人")
-            self.window[self.role_image].update(self.inifile.get("gui","image_path") + "my_role.png")
+            self.window[self.role_image].update(self.image_path + "my_role.png")
 
             # prepare hide
             self.window[self.hide_button].update(text="役職を隠す")
@@ -96,16 +100,10 @@ class GUI():
     def close_window(self) -> None:
         self.window.close()
 
-    def resize(self) -> None:
-        img = Image.open(self.inifile.get("gui","image_path") + "villager.png")
+    def resize(self, image_path:str, save_path:str) -> None:
+        img = Image.open(image_path)
 
         (width, height) = (img.width//10, img.height//10)
         
         img_resized = img.resize((width, height))
-        img_resized.save(self.inifile.get("gui","image_path") + "my_role.png")
-
-
-        img = Image.open(self.inifile.get("gui","image_path") + "hide.png")
-        
-        img_resized = img.resize((width, height))
-        img_resized.save(self.inifile.get("gui","image_path") + "rhide.png")
+        img_resized.save(save_path)
