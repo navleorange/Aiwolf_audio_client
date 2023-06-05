@@ -1,0 +1,2 @@
+icon.png, villager.png, werewolf.png, seer.png, possessed.png: https://nanamiyuki.com/werewolf
+hide.png: https://hiyokoyarou.com/miserarenaiyo/

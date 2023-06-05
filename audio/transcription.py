@@ -2,9 +2,10 @@ import configparser
 
 from . import audio_transcriber
 from . import audio_utils
+from gui.display import GUI
 
-def search_device(inifile:configparser.ConfigParser) -> None:
-    transcriber = audio_transcriber.AudioTranscriber(inifile=inifile)
+def search_device(inifile:configparser.ConfigParser, gui:GUI) -> None:
+    transcriber = audio_transcriber.AudioTranscriber(inifile=inifile, gui=gui)
 
     valid_devices = audio_utils.get_valid_input_devices()
     print("使用可能なオーディオデバイス:")
