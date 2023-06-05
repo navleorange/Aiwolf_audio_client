@@ -9,6 +9,7 @@ class GUI():
         self.hide_button = "hide_button"
         self.comment_title = "comment_title"
         self.comments = "comments"
+        self.action = "action"
         self.hide_flag = False
         self.comment_list = []
         self.inifile = inifile
@@ -28,17 +29,38 @@ class GUI():
                             )
         self.comment_frame = sg.Frame(title="",
                                       layout=[ [sg.Text(key=self.comment_title, text="あなたの発言履歴",font=("Arial",20)) ],
-                                       [sg.Multiline(key=self.comments, default_text="", text_color="#FF0000", disabled=True ,size=(45,30), font=("Arial",20), background_color="#C0C0C0")]
+                                       [sg.Multiline(key=self.comments, default_text="", text_color="#FF0000", disabled=True ,size=(40,20), font=("Arial",20), background_color="#C0C0C0")]
                                        ],
                             element_justification="center",
                             relief=sg.RELIEF_SUNKEN
                             )
+        self.gamemaster_frame = sg.Frame(title="",
+                                         layout=[
+                                             [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20)) ],
+                                         ],
+                                        )
+        
+        self.left_column = sg.Column([
+            [self.role_frame],
+            [self.gamemaster_frame]
+        ])
+        self.right_column = sg.Column([
+            [self.comment_frame]
+        ])
 
-
+        self.game_column = sg.Column([
+            [self.left_column, self.right_column]
+        ])
+        
         self.layout = [
-            [self.role_frame, self.comment_frame],
-            [sg.Button('Exit', size=(8,2))]
+            [self.game_column]
         ]
+        
+        # self.layout = [
+        #     [self.role_frame, self.comment_frame],
+        #     [self.gamemaster_frame],
+        #     [sg.Button('Exit', size=(8,2))]
+        # ]
     
     def open_window(self) -> None:
         self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,500) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
