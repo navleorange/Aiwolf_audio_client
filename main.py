@@ -20,6 +20,8 @@ def listen_gui(gui:display.GUI):
             break
         elif event == gui.hide_button:
             gui.hide_role()
+        elif event == gui.role_change:
+            gui.update_role_image()
     
     gui.close_window()
 
