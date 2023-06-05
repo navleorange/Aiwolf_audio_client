@@ -7,6 +7,7 @@ class GUI():
     def __init__(self, inifile:configparser.ConfigParser) -> None:
         self.role_text = "role_text"
         self.role_image = "role_image"
+        self.role_change = "role_change"    # only use test
         self.hide_button = "hide_button"
         self.comment_title = "comment_title"
         self.comments = "comments"
@@ -16,22 +17,24 @@ class GUI():
 
         self.inifile = inifile
         self.image_path = self.inifile.get("gui","image_path")
+        self.role_path = self.inifile.get("gui","role_path")
         self.unidentified_path = self.inifile.get("gui","unidentified_path")
+
+        self.width = 130
+        self.height = 180
 
         sg.theme("DarkBrown4")
         #TealMono
         #GreenTan
 
         print("-----result-------")
-        print(self.image_path)
-        print(self.unidentified_path)
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
         self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
 
 
         self.role_background = "#DCDCDC"
         self.role_frame = sg.Frame(title="",
-                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.image_path + "test.png")],
+                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.unidentified_path + "use.png", background_color="#D3D3D3")],
                                    [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))]
                                    ],
                             background_color=self.role_background,
@@ -45,7 +48,9 @@ class GUI():
                             relief=sg.RELIEF_SUNKEN
                             )
         self.gamemaster_frame = sg.Frame(title="",
-                                         layout=[[sg.Text(key=self.action, text="現在の行動：",font=("Arial",20)) ]
+                                         layout=[
+                                             [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20))],
+                                             [sg.Button(key=self.role_change, button_text="役職を変える", pad=((210,0),(0,0)), size=(9,2))]
                                          ],
                                          relief=sg.RELIEF_SUNKEN
                                     )
@@ -69,8 +74,10 @@ class GUI():
     def open_window(self) -> None:
         self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,500) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
     
-    def update_role(self) -> None:
-        self.window[self.role_text].update("あなたの役職\n" + "村人")
+    def update_role_image(self) -> None:
+        anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
+        self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
+        self.window[self.role_image].update(self.unidentified_path + "use.png")
     
     def add_comments(self, comment:str) -> None:
         self.comment_list.append(comment)
@@ -100,10 +107,13 @@ class GUI():
     def close_window(self) -> None:
         self.window.close()
 
+    def unidentified_resize(self, image_path:str, save_path:str) -> None:
+        self.resize(image_path=image_path, save_path=save_path, w=15)
+
     def resize(self, image_path:str, save_path:str) -> None:
         img = Image.open(image_path)
 
-        (width, height) = (img.width//10, img.height//10)
-        
-        img_resized = img.resize((width, height))
+        # (width, height) = (img.width//10, img.height//10)
+
+        img_resized = img.resize((self.width, self.height))
         img_resized.save(save_path)
