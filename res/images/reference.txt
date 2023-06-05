@@ -1,2 +1,3 @@
-icon.png, villager.png, werewolf.png, seer.png, medium.png, possessed.png: https://nanamiyuki.com/werewolf
+role file: https://nanamiyuki.com/werewolf
+unidentified file: https://nanamiyuki.com/archives/44881
 hide.png: https://hiyokoyarou.com/miserarenaiyo/
