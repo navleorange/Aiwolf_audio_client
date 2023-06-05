@@ -16,9 +16,10 @@ from . import (
 
 import json
 from res.settings import Inform
+from gui.display import GUI
 
 class AudioTranscriber:
-    def __init__(self, inifile:configparser.ConfigParser):
+    def __init__(self, inifile:configparser.ConfigParser, gui:GUI):
         self.inifile = inifile
         self.model_wrapper = whisper_utils.WhisperModelWrapper(inifile=self.inifile)
         self.vad_wrapper = vad_utils.VadWrapper(inifile=self.inifile)
@@ -29,6 +30,7 @@ class AudioTranscriber:
         self.inform_info = Inform()
         self.inform_format = self.inform_info.get_Inform_format()
         self.whisper_use = self.inifile.getboolean("whisper","use_flag")
+        self.gui = gui
     
     def set_connection(self, connection) -> None:
         self.connection = connection
@@ -44,10 +46,10 @@ class AudioTranscriber:
         self.connection.send(message=json.dumps(self.inform_format,separators=(",",":")))
 
     def listen_text(self) -> None:
-        #self.connection.set_time_out(time=self.inifile.getfloat("connection","non_blocking_time"))
         segments = self.connection.receive()
         if segments != None:
             segments = json.loads(segments)
+            self.gui.add_comments(comment=segments["humanMessage"])
             print(segments["humanMessage"])
 
     async def transcribe_audio(self) -> None:
