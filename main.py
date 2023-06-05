@@ -11,7 +11,7 @@ import os
 
 def listen_gui(gui:display.GUI):
     gui.open_window()
-    gui.resize()
+    #gui.resize()
 
     while True:
         event, values = gui.read()
