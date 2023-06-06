@@ -70,8 +70,6 @@ def main():
             break
         elif event == gui.hide_button:
             gui.hide_role()
-        elif event == gui.role_change:
-            gui.update_role_image()
         elif event == gui.get_name:
             gui.get_name()
         elif event == gui.update_comments:
@@ -79,7 +77,11 @@ def main():
         elif event == gui.update_inform:
             gui.update_inform(message=values[event])
         elif event == gui.check_confirm:
-            gui.check_confirm(message=values[event])
+            gui.check_confirm(message=values[event][0], image=values[event][1])
+        elif event == gui.resize:
+            gui.resize(image_path=values[event][0], save_path=values[event][1])
+        elif event == gui.update_role_image:
+            gui.update_role_image(role=values[event])
         elif future != None:
             print(future.result())
 
