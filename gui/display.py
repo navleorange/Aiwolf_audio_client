@@ -120,12 +120,6 @@ class GUI():
         return self.message
     
     def update_role_image(self, role:str) -> None:
-        print(type(role))
-        print(role)
-        print(type(self.role_path))
-        print(self.role_path)
-        print(type(self.role_resize))
-        print(self.role_resize)
         self.resize(image_path=self.role_path.format(role=role), save_path=self.role_resize.format(role=role))
         self.role_image_png = self.role_resize.format(role=role)
 
