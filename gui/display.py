@@ -88,7 +88,7 @@ class GUI():
     def get_name(self) -> str:
         name = None
         while name == None or name == "":
-            name = sg.popup_get_text("あなたの名前を入力してください！","")
+            name = sg.popup_get_text(message="あなたの名前を入力してください！",title="名前を教えて",font=("Arial",20))
 
         return name
     
@@ -96,7 +96,7 @@ class GUI():
         message, device_num = transcription.search_device()
         index = None
         while index == None or not index.isdigit() or (int(index) < 0 or device_num <= int(index)):
-            index = sg.popup_get_text(message=message)
+            index = sg.popup_get_text(message=message, title="オーディオ指定",font=("Arial",20))
         
         return int(index)
     
