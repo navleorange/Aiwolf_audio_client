@@ -78,6 +78,8 @@ def main():
             gui.update_comments(comment=values[event])
         elif event == gui.update_inform:
             gui.update_inform(message=values[event])
+        elif event == gui.check_confirm:
+            gui.check_confirm(message=values[event])
         elif future != None:
             print(future.result())
 
