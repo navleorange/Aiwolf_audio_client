@@ -83,9 +83,13 @@ def main():
         elif event == gui.update_role:
             gui.update_role(role=values[event])
         elif event == gui.check_vote:
-            gui.check_vote(vote_list=values[event])
+            gui.check_vote(vote_list=values[event][0], message=values[event][1])
         elif event == gui.close_vote_window:
             gui.close_vote_window()
+        elif event == gui.unique_action:
+            gui.unique_action(candidate_list=values[event][0], message=values[event][1])
+        elif event == gui.close_unique_window:
+            gui.close_unique_window()
         elif event == gui.finish:
             gui.finish()
             break
