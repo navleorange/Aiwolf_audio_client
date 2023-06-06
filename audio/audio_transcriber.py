@@ -44,18 +44,28 @@ class AudioTranscriber:
         self.time_limit = time_limit
 
     def send_audio(self, audio_data_np) -> None:
+        if time.time() < self.time_limit:
+            return
+
         self.inform_info.reset_values()
         self.inform_info.update_audio(audio=self.wave.get_audio_dict(audio=audio_data_np))
         self.inform_info.update_request(request=self.inform_info.request_class.convert_audio)
         self.inform_info.update_inform_format()
+
+        if time.time() < self.time_limit:
+            return
+
         self.connection.send(message=json.dumps(self.inform_format,separators=(",",":")))
 
     def listen_text(self) -> None:
+        if time.time() < self.time_limit:
+            return
+        
         segments = self.connection.receive()
-        if segments != None:
+
+        if segments != None and time.time() < self.time_limit:
             segments = json.loads(segments)
             self.window.write_event_value(key=self.gui.update_comments, value=segments["humanMessage"])
-            print(segments["humanMessage"])
 
     async def transcribe_audio(self) -> None:
         with ThreadPoolExecutor() as executor:
@@ -76,6 +86,9 @@ class AudioTranscriber:
                     audio_data_np = await asyncio.get_event_loop().run_in_executor(
                         executor, self.audio_queue.get
                     )
+
+                    if time.time() < self.time_limit:
+                        break
                     
                     # send to server
                     await asyncio.get_event_loop().run_in_executor(
@@ -113,8 +126,8 @@ class AudioTranscriber:
 
     def start_transcription(self, selected_device_index:int, inifile:configparser.ConfigParser) -> None:
         stream = audio_utils.create_audio_stream(inifile=inifile, selected_device_index=selected_device_index, callback=self.process_audio)
-
-        print("Listening...")
+        
+        self.window.write_event_value(key=self.gui.update_inform, value="話し合いを始めてください")
         asyncio.run(self.transcribe_audio())
         stream.start_stream()
         stream.stop_stream()
