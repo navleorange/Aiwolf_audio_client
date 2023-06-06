@@ -3,6 +3,26 @@ import pyaudio
 
 format = pyaudio.paInt16
 
+class Role():
+	def __init__(self) -> None:
+		# init role name
+		self.villager = "villager"
+		self.seer = "seer"
+		self.medium = "medium"	# 前日に吊られた人の役職を知ることができる
+		self.guard = "guard"
+		self.werewolf = "werewolf"
+		self.possessed = "possessed"
+
+		self.role_list = [self.villager,self.seer,self.medium,self.guard,self.werewolf,self.possessed]
+		self.role_translate = {self.villager:"村人",self.seer:"占い師",self.medium:"霊能者",self.guard:"狩人",self.werewolf:"人狼",self.possessed:"狂人"}
+	
+	def translate_ja(self, role:str) -> str:
+
+		if self.role_translate.get(role,None) == None:
+			raise ValueError(f"{role} is not exist role")
+
+		return self.role_translate.get(role)
+
 class AgentInfo:
 	def __init__(self) -> None:
 		self.name = "name"
