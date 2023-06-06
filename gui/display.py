@@ -29,6 +29,8 @@ class GUI():
         self.message = ""       # inform message
         self.vote_flag = False  # True: set vote target False: not set vote target
         self.vote_targt = None  # set vote target
+        self.unique_action_flag = False  # True: done unique action False: not done
+        self.unique_target = None
         self.role_image_png = None  # role image path
         self.role_display = "未定"
         self.role_display_hide = "?????????"
@@ -127,12 +129,14 @@ class GUI():
         self.check_flag = True
         return self.message
     
-    def check_vote(self, vote_list:list) -> None:
+    def check_vote(self, vote_list:list, message:str) -> None:
         if self.vote_flag:
             return
 
         vote_layout = []
         vote_line = []
+
+        vote_layout.append([sg.Text(text=message,font=("Arial",20))])
 
         for vote in vote_list:
             vote_line.append(sg.Button(vote, font=self.popup_font, size=(15, 5)))
@@ -153,11 +157,43 @@ class GUI():
             self.check_vote(vote_list=vote_list)
         elif event != None:
             self.vote_targt = event
-            self.vote_targt = event
             self.vote_flag = True
+    
+    def unique_action(self,candidate_list:list ,message:str) -> None:
+        if self.unique_action_flag:
+            return
+        
+        unique_layout = []
+        unique_line = []
+
+        unique_layout.append([sg.Text(text=message,font=("Arial",20))])
+
+        for target in candidate_list:
+            unique_line.append(sg.Button(target, font=self.popup_font, size=(15, 5)))
+
+            if len(unique_line) >= 3:
+                unique_layout.append(unique_line.copy())
+                unique_line.clear()
+        
+        if len(unique_line) != 0:
+            unique_layout.append(unique_line.copy())
+        
+        self.window_unique = sg.Window("特殊行動",layout=unique_layout.copy(),size=(800,480),resizable=True, keep_on_top=True, icon=self.icon_resize)
+
+        event, values = self.window_unique.read()
+
+        if event == sg.WIN_CLOSED:
+            self.close_unique_window()
+            self.unique_action(candidate_list=candidate_list, message=message)
+        elif event != None:
+            self.unique_target = event
+            self.unique_action_flag = True
 
     def close_vote_window(self) -> None:
         self.window_vote.close()
+    
+    def close_unique_window(self) -> None:
+        self.window_unique.close()
     
     def update_role(self, role:str) -> None:
         self.role_display = self.role_info.translate_ja(role=role)
