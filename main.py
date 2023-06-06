@@ -7,40 +7,15 @@ util.last_resort()
 from player.agent import Agent
 import PySimpleGUI as sg
 from gui import display
-import os
+from audio import whisper_utils
+import time
 
-def listen_gui(gui:display.GUI):
-    gui.open_window()
-    #gui.resize()
+def execute_werewolf(agent:Agent, config_path:str):
 
-    while True:
-        event, values = gui.read()
+    # inform 
+    agent.window.write_event_value(key=agent.gui.update_inform, value="connecting to server...\n")
 
-        if event in ((sg.WIN_CLOSED, 'Exit')):
-            break
-        elif event == gui.hide_button:
-            gui.hide_role()
-        elif event == gui.role_change:
-            gui.update_role_image()
-    
-    gui.close_window()
 
-def main():
-    config_path = "./res/config.ini"
-    inifile = util.check_config(config_path=config_path)
-    inifile.read(config_path,"utf-8")
-
-    gui = display.GUI(inifile=inifile)
-
-    # multi process
-    executor = concurrent.futures.ThreadPoolExecutor()
-    future = executor.submit(listen_gui, gui)
-
-    name = input("あなたの名前を入力してください！:")
-    
-    agent = Agent(inifile=inifile,gui=gui,name=name)
-
-    print("connecting to server...")
     connection = client.Client(config_path=config_path)
     connection.connect()
 
@@ -57,8 +32,54 @@ def main():
         if message != "":
             connection.send(message=message)
     
-    gui.close_window()
     connection.close()
+    agent.window.write_event_value(key=agent.gui.finish, value=None)
+
+def main():
+    config_path = "./res/config.ini"
+    inifile = util.check_config(config_path=config_path)
+    inifile.read(config_path,"utf-8")
+    whisper_flag = inifile.getboolean("whisper","use_flag")
+
+    # init agent
+    agent = Agent(inifile=inifile)
+
+    if whisper_flag:
+        model_wrapper = whisper_utils.WhisperModelWrapper(inifile=inifile)
+        agent.transcriber.set_model_wrapper(model=model_wrapper)
+
+     # init gui
+    gui = display.GUI(inifile=inifile)
+    gui.open_window()
+
+    # get agent information from gui
+    agent.set_gui(gui=gui, window=gui.window)
+    agent.set_name(name=gui.get_name())
+    agent.set_device_index(device_index=gui.get_audio_index())
+    agent.transcriber.set_gui(gui=gui, window=gui.window)
+
+    # multi thread
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+    future = executor.submit(execute_werewolf, agent, config_path)
+
+    # gui loop
+    while True:
+        event, values = gui.read()
+
+        if event in ((sg.WIN_CLOSED, 'Exit')):
+            break
+        elif event == gui.hide_button:
+            gui.hide_role()
+        elif event == gui.role_change:
+            gui.update_role_image()
+        elif event == gui.get_name:
+            gui.get_name()
+        elif event == gui.update_comments:
+            gui.update_comments(comment=values[event])
+        elif event == gui.update_inform:
+            gui.update_inform(message=values[event])
+        elif future != None:
+            print(future.result())
 
 if __name__ == "__main__":
     main()

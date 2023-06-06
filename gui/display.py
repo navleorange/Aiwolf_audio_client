@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import configparser
 from PIL import Image #Pillow
 from lib import util
+from audio import transcription
 
 class GUI():
     def __init__(self, inifile:configparser.ConfigParser) -> None:
@@ -12,8 +13,12 @@ class GUI():
         self.comment_title = "comment_title"
         self.comments = "comments"
         self.action = "action"
+        self.inform_title = "inform_title"
+        self.inform = "inform"
         self.hide_flag = False
+
         self.comment_list = []
+        self.inform_list = []
 
         self.inifile = inifile
         self.image_path = self.inifile.get("gui","image_path")
@@ -27,13 +32,15 @@ class GUI():
         #TealMono
         #GreenTan
 
-        print("-----result-------")
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
         self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
+        self.init_icon(image_path=self.image_path+"icon.png", save_path=self.image_path+"icon.ico")
 
 
         self.role_background = "#DCDCDC"
         self.inform_background = "#C0C0C0"
+        self.text_color = "#FF0000"
+
         self.role_frame = sg.Frame(title="",
                                    layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.unidentified_path + "use.png", background_color="#D3D3D3")],
                                    [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))],
@@ -45,15 +52,15 @@ class GUI():
                             )
         self.comment_frame = sg.Frame(title="",
                                       layout=[ [sg.Text(key=self.comment_title, text="あなたの発言履歴",font=("Arial",20)) ],
-                                       [sg.Multiline(key=self.comments, default_text="", text_color="#FF0000", disabled=True ,size=(40,20), font=("Arial",20), background_color=self.inform_background)]
+                                       [sg.Multiline(key=self.comments, default_text="", text_color=self.text_color, disabled=True ,size=(40,20), font=("Arial",20), background_color=self.inform_background)]
                                        ],
                             element_justification="center",
                             relief=sg.RELIEF_SUNKEN
                             )
         self.gamemaster_frame = sg.Frame(title="",
                                          layout=[
-                                             [sg.Text(key=self.action, text="ゲームマスターからのお知らせ",font=("Arial",20))],
-                                             [sg.Multiline(key=self.action, default_text="",font=("Arial",20),size=(28,20),background_color=self.inform_background)]
+                                             [sg.Text(key=self.inform_title, text="ゲームマスターからのお知らせ",font=("Arial",20))],
+                                             [sg.Multiline(key=self.inform, default_text="",text_color=self.text_color,font=("Arial",20),size=(28,20),background_color=self.inform_background)]
                                          ],
                                          element_justification="center",
                                          relief=sg.RELIEF_SUNKEN
@@ -76,16 +83,36 @@ class GUI():
         ]
     
     def open_window(self) -> None:
-        self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,600) ,resizable=True, finalize=True, icon=self.image_path + "icon.png")
+        self.window = sg.Window("人狼ゲーム",self.layout,size=(1000,600) ,resizable=True, finalize=True, icon=self.image_path + "icon.ico")
+    
+    def get_name(self) -> str:
+        name = None
+        while name == None or name == "":
+            name = sg.popup_get_text("あなたの名前を入力してください！","")
+
+        return name
+    
+    def get_audio_index(self) -> int:
+        message, device_num = transcription.search_device()
+        index = None
+        while index == None or not index.isdigit() or (int(index) < 0 or device_num <= int(index)):
+            index = sg.popup_get_text(message=message)
+        
+        return int(index)
     
     def update_role_image(self) -> None:
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
         self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
         self.window[self.role_image].update(self.unidentified_path + "use.png")
     
-    def add_comments(self, comment:str) -> None:
+    def update_comments(self, comment:str) -> None:
         self.comment_list.append(comment)
         self.window[self.comments].update("".join(self.comment_list))
+    
+    def update_inform(self, message:str) -> None:
+        self.inform_list.append(message)
+        print(self.inform_list)
+        self.window[self.inform].update("".join(self.inform_list))
     
     def hide_role(self) -> None:
         # hide
@@ -121,3 +148,10 @@ class GUI():
 
         img_resized = img.resize((self.width, self.height))
         img_resized.save(save_path)
+    
+    def init_icon(self, image_path:str, save_path:str) -> None:
+        img = Image.open(image_path)
+        img.save(save_path, format="ICO", sizez=[(256,256)])
+    
+    def finish(self) -> None:
+        self.close_window()
