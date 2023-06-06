@@ -10,18 +10,17 @@ import configparser
 from . import (
     audio_utils,
     vad_utils,
-    whisper_utils,
     wave
 )
 
 import json
 from res.settings import Inform
+import PySimpleGUI as sg
 from gui.display import GUI
 
 class AudioTranscriber:
-    def __init__(self, inifile:configparser.ConfigParser, gui:GUI):
+    def __init__(self, inifile:configparser.ConfigParser):
         self.inifile = inifile
-        self.model_wrapper = whisper_utils.WhisperModelWrapper(inifile=self.inifile)
         self.vad_wrapper = vad_utils.VadWrapper(inifile=self.inifile)
         self.wave = wave.Wave(inifile=self.inifile)
         self.silent_chunks = 0  # just count silent variable
@@ -30,11 +29,17 @@ class AudioTranscriber:
         self.inform_info = Inform()
         self.inform_format = self.inform_info.get_Inform_format()
         self.whisper_use = self.inifile.getboolean("whisper","use_flag")
+
+    def set_gui(self, gui:GUI, window:sg.Window) -> None:
         self.gui = gui
-    
+        self.window = window
+
     def set_connection(self, connection) -> None:
         self.connection = connection
     
+    def set_model_wrapper(self, model) -> None:
+        self.model_wrapper = model
+
     def set_time_limit(self, time_limit) -> None:
         self.time_limit = time_limit
 
@@ -49,7 +54,7 @@ class AudioTranscriber:
         segments = self.connection.receive()
         if segments != None:
             segments = json.loads(segments)
-            self.gui.add_comments(comment=segments["humanMessage"])
+            self.window.write_event_value(key=self.gui.update_comments, value=segments["humanMessage"])
             print(segments["humanMessage"])
 
     async def transcribe_audio(self) -> None:
