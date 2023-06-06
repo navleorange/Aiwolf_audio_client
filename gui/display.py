@@ -4,6 +4,8 @@ from PIL import Image #Pillow
 from lib import util
 from audio import transcription
 
+from res.settings import Role
+
 class GUI():
     def __init__(self, inifile:configparser.ConfigParser) -> None:
         # init PySimpleGUI key
@@ -25,7 +27,10 @@ class GUI():
         self.check_flag = False # True: set new message False: not set new message
         self.message = ""       # inform message
         self.role_image_png = None  # role image path
+        self.role_display = "未定"
+        self.role_display_hide = "?????????"
         self.hide_flag = False      # True: hide image False: appear image 
+        self.role_info = Role()
 
         # load ini file
         self.inifile = inifile
@@ -56,7 +61,7 @@ class GUI():
         sg.theme("DarkBrown4")
 
         self.role_frame = sg.Frame(title="",
-                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n未定",background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.role_image_png, background_color="#D3D3D3")],
+                                   layout=[ [sg.Text(key=self.role_text, text="あなたの役職\n"+self.role_display,background_color=self.role_background , font=("Arial",20)), sg.Image(key=self.role_image, filename=self.role_image_png, background_color="#D3D3D3")],
                                    [sg.Button(key=self.hide_button, button_text="役職を隠す", pad=((210,0),(0,0)), size=(9,2))],
                                    [sg.Text(key=self.action, text="現在の行動：",font=("Arial",20), background_color=self.role_background)],
                                    ],
@@ -119,7 +124,8 @@ class GUI():
         self.check_flag = True
         return self.message
     
-    def update_role_image(self, role:str) -> None:
+    def update_role(self, role:str) -> None:
+        self.role_display = self.role_info.translate_ja(role=role)
         self.resize(image_path=self.role_path.format(role=role), save_path=self.role_resize.format(role=role))
         self.role_image_png = self.role_resize.format(role=role)
 
@@ -137,14 +143,14 @@ class GUI():
     
     def hide_role(self) -> None:
         if not self.hide_flag:
-            self.window[self.role_text].update("あなたの役職\n" + "?????????")
+            self.window[self.role_text].update("あなたの役職\n" + self.role_display_hide)
             self.window[self.role_image].update(self.hide_image_resize)
 
             # prepare display
             self.window[self.hide_button].update(text="役職を表示する")
             self.hide_flag = not self.hide_flag
         else:
-            self.window[self.role_text].update("あなたの役職\n" + "村人")
+            self.window[self.role_text].update("あなたの役職\n" + self.role_display)
             self.window[self.role_image].update(self.role_image_png)
 
             # prepare hide

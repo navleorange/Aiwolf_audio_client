@@ -80,8 +80,8 @@ def main():
             gui.check_confirm(message=values[event][0], image=values[event][1])
         elif event == gui.resize:
             gui.resize(image_path=values[event][0], save_path=values[event][1])
-        elif event == gui.update_role_image:
-            gui.update_role_image(role=values[event])
+        elif event == gui.update_role:
+            gui.update_role(role=values[event])
         elif future != None:
             print(future.result())
 
