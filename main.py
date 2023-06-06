@@ -68,9 +68,7 @@ def main():
     while True:
         event, values = gui.read()
 
-        if event in ((sg.WIN_CLOSED, 'Exit')):
-            break
-        elif event == gui.hide_button:
+        if event == gui.hide_button:
             gui.hide_role()
         elif event == gui.get_name:
             gui.get_name()
@@ -88,6 +86,9 @@ def main():
             gui.check_vote(vote_list=values[event])
         elif event == gui.close_vote_window:
             gui.close_vote_window()
+        elif event == gui.finish:
+            gui.finish()
+            break
         elif future != None:
             print(future.result())
 

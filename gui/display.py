@@ -127,7 +127,7 @@ class GUI():
         self.check_flag = True
         return self.message
     
-    def check_vote(self, vote_list:list) -> str:
+    def check_vote(self, vote_list:list) -> None:
         if self.vote_flag:
             return
 
@@ -149,18 +149,20 @@ class GUI():
         event, values = self.window_vote.read()
 
         if event == sg.WIN_CLOSED:
-            return None
-        else:
+            self.close_vote_window()
+            self.check_vote(vote_list=vote_list)
+        elif event != None:
             self.vote_targt = event
-        
-        self.vote_flag = True
-        self.vote_targt = event
-    
+            self.vote_targt = event
+            self.vote_flag = True
+
     def close_vote_window(self) -> None:
         self.window_vote.close()
     
     def update_role(self, role:str) -> None:
         self.role_display = self.role_info.translate_ja(role=role)
+        self.window[self.role_text].update(self.role_display)
+
         self.resize(image_path=self.role_path.format(role=role), save_path=self.role_resize.format(role=role))
         self.role_image_png = self.role_resize.format(role=role)
 
