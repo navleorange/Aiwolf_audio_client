@@ -17,14 +17,20 @@ class GUI():
         self.inform = "inform"
         self.hide_flag = False
 
+        # 
         self.comment_list = []
         self.inform_list = []
+        self.check_flag = False
+        self.message = ""
 
         self.inifile = inifile
         self.image_path = self.inifile.get("gui","image_path")
         self.role_path = self.inifile.get("gui","role_path")
         self.unidentified_path = self.inifile.get("gui","unidentified_path")
+
+        # use
         self.use_icon_path = self.image_path+"icon.ico"
+        self.popup_font = font=("Arial",20)
 
         self.width = 130
         self.height = 180
@@ -89,7 +95,7 @@ class GUI():
     def get_name(self) -> str:
         name = None
         while name == None or name == "":
-            name = sg.popup_get_text(message="あなたの名前を入力してください！",title="名前を教えて",font=("Arial",20), icon=self.use_icon_path)
+            name = sg.popup_get_text(message="あなたの名前を入力してください！",title="名前を教えて",font=self.popup_font, icon=self.use_icon_path)
 
         return name
     
@@ -97,9 +103,14 @@ class GUI():
         message, device_num = transcription.search_device()
         index = None
         while index == None or not index.isdigit() or (int(index) < 0 or device_num <= int(index)):
-            index = sg.popup_get_text(message=message, title="オーディオ指定",font=("Arial",20), icon=self.use_icon_path)
+            index = sg.popup_get_text(message=message, title="オーディオ指定",font=self.popup_font, icon=self.use_icon_path)
         
         return int(index)
+    
+    def check_confirm(self, message:str) -> str:
+        self.message = sg.popup_ok(message, font=self.popup_font, icon=self.use_icon_path)
+        self.check_flag = True
+        return self.message
     
     def update_role_image(self) -> None:
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
@@ -112,7 +123,6 @@ class GUI():
     
     def update_inform(self, message:str) -> None:
         self.inform_list.append(message)
-        print(self.inform_list)
         self.window[self.inform].update("".join(self.inform_list))
     
     def hide_role(self) -> None:
