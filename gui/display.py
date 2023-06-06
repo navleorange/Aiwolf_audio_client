@@ -24,6 +24,7 @@ class GUI():
         self.image_path = self.inifile.get("gui","image_path")
         self.role_path = self.inifile.get("gui","role_path")
         self.unidentified_path = self.inifile.get("gui","unidentified_path")
+        self.use_icon_path = self.image_path+"icon.ico"
 
         self.width = 130
         self.height = 180
@@ -34,7 +35,7 @@ class GUI():
 
         anonymous = util.select_unidentified(unidentified_path=self.unidentified_path+"*.png")
         self.resize(image_path=anonymous, save_path=self.unidentified_path + "use.png")
-        self.init_icon(image_path=self.image_path+"icon.png", save_path=self.image_path+"icon.ico")
+        self.init_icon(image_path=self.image_path+"icon.png", save_path=self.use_icon_path)
 
 
         self.role_background = "#DCDCDC"
@@ -88,7 +89,7 @@ class GUI():
     def get_name(self) -> str:
         name = None
         while name == None or name == "":
-            name = sg.popup_get_text(message="あなたの名前を入力してください！",title="名前を教えて",font=("Arial",20))
+            name = sg.popup_get_text(message="あなたの名前を入力してください！",title="名前を教えて",font=("Arial",20), icon=self.use_icon_path)
 
         return name
     
@@ -96,7 +97,7 @@ class GUI():
         message, device_num = transcription.search_device()
         index = None
         while index == None or not index.isdigit() or (int(index) < 0 or device_num <= int(index)):
-            index = sg.popup_get_text(message=message, title="オーディオ指定",font=("Arial",20))
+            index = sg.popup_get_text(message=message, title="オーディオ指定",font=("Arial",20), icon=self.use_icon_path)
         
         return int(index)
     
