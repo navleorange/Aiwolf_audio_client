@@ -3,6 +3,7 @@ import configparser
 from PIL import Image #Pillow
 from lib import util
 from audio import transcription
+import time
 
 from res.settings import Role
 
@@ -26,6 +27,8 @@ class GUI():
         self.inform_list = []   # game master inform list
         self.check_flag = False # True: set new message False: not set new message
         self.message = ""       # inform message
+        self.vote_flag = False  # True: set vote target False: not set vote target
+        self.vote_targt = None  # set vote target
         self.role_image_png = None  # role image path
         self.role_display = "未定"
         self.role_display_hide = "?????????"
@@ -123,6 +126,38 @@ class GUI():
         self.message = sg.popup_ok(message,title="ゲームの情報", font=self.popup_font, image=image, icon=self.icon_resize)
         self.check_flag = True
         return self.message
+    
+    def check_vote(self, vote_list:list) -> str:
+        if self.vote_flag:
+            return
+
+        vote_layout = []
+        vote_line = []
+
+        for vote in vote_list:
+            vote_line.append(sg.Button(vote, font=self.popup_font, size=(15, 5)))
+
+            if len(vote_line) >= 3:
+                vote_layout.append(vote_line.copy())
+                vote_line.clear()
+        
+        if len(vote_line) != 0:
+            vote_layout.append(vote_line.copy())
+
+        self.window_vote = sg.Window("投票",layout=vote_layout.copy(),size=(800,480),resizable=True, keep_on_top=True, icon=self.icon_resize)
+        
+        event, values = self.window_vote.read()
+
+        if event == sg.WIN_CLOSED:
+            return None
+        else:
+            self.vote_targt = event
+        
+        self.vote_flag = True
+        self.vote_targt = event
+    
+    def close_vote_window(self) -> None:
+        self.window_vote.close()
     
     def update_role(self, role:str) -> None:
         self.role_display = self.role_info.translate_ja(role=role)

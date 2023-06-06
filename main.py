@@ -30,6 +30,8 @@ def execute_werewolf(agent:Agent, config_path:str):
         message = agent.action()
 
         if message != "":
+            print("send:")
+            print(message)
             connection.send(message=message)
     
     connection.close()
@@ -82,6 +84,10 @@ def main():
             gui.resize(image_path=values[event][0], save_path=values[event][1])
         elif event == gui.update_role:
             gui.update_role(role=values[event])
+        elif event == gui.check_vote:
+            gui.check_vote(vote_list=values[event])
+        elif event == gui.close_vote_window:
+            gui.close_vote_window()
         elif future != None:
             print(future.result())
 
