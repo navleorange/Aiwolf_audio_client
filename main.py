@@ -8,7 +8,6 @@ from player.agent import Agent
 import PySimpleGUI as sg
 from gui import display
 from audio import whisper_utils
-import time
 
 def execute_werewolf(agent:Agent, config_path:str):
 
