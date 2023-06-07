@@ -61,6 +61,7 @@ class GUI():
         self.role_background = "#DCDCDC"
         self.inform_background = "#C0C0C0"
         self.text_color = "#FF0000"
+        self.sub_window_size = (800,600)
 
         sg.theme("DarkBrown4")
 
@@ -147,7 +148,7 @@ class GUI():
         if len(vote_line) != 0:
             vote_layout.append(vote_line.copy())
 
-        self.window_vote = sg.Window("投票",layout=vote_layout.copy(),size=(800,480),resizable=True, keep_on_top=True, icon=self.icon_resize)
+        self.window_vote = sg.Window("投票",layout=vote_layout.copy(),size=self.sub_window_size,resizable=True, keep_on_top=True, icon=self.icon_resize)
         
         event, values = self.window_vote.read()
 
@@ -177,7 +178,7 @@ class GUI():
         if len(unique_line) != 0:
             unique_layout.append(unique_line.copy())
         
-        self.window_unique = sg.Window("特殊行動",layout=unique_layout.copy(),size=(800,480),resizable=True, keep_on_top=True, icon=self.icon_resize)
+        self.window_unique = sg.Window("特殊行動",layout=unique_layout.copy(),size=self.sub_window_size,resizable=True, keep_on_top=True, icon=self.icon_resize)
 
         event, values = self.window_unique.read()
 
