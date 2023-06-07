@@ -30,8 +30,6 @@ def execute_werewolf(agent:Agent, config_path:str):
         message = agent.action()
 
         if message != "":
-            print("send:")
-            print(message)
             connection.send(message=message)
     
     connection.close()
