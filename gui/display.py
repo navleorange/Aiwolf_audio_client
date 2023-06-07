@@ -3,7 +3,6 @@ import configparser
 from PIL import Image #Pillow
 from lib import util
 from audio import transcription
-import time
 
 from res.settings import Role
 

@@ -1,9 +1,6 @@
 import json
 import configparser
 import time
-from lib import(
-    util
-)
 from res.settings import Inform
 from audio import audio_transcriber
 from audio import transcription
