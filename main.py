@@ -11,11 +11,10 @@ from audio import whisper_utils
 
 def execute_werewolf(agent:Agent, config_path:str):
 
-    connection = client.Client(config_path=config_path)
-    
     # inform 
-    agent.window.write_event_value(key=agent.gui.update_inform, value=f"connecting to server...(host:{connection.host}, port:{connection.port})\n")
+    agent.window.write_event_value(key=agent.gui.update_inform, value="connecting to server...\n")
 
+    connection = client.Client(config_path=config_path)
     connection.connect()
 
     agent.transcriber.set_connection(connection=connection)
