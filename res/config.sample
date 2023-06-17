@@ -1,0 +1,30 @@
+[connection]
+host = ホスト
+port = ポート
+buffer = 2048
+non_blocking_time = 0.8
+
+[gui]
+image_path = ./res/images/
+role_path = ./res/images/role/
+unidentified_path = ./res/images/unidentified/
+
+[audio]
+rate = 16000
+chunk = 480
+channels = 1
+input_flag = true
+speech_thareshold = 20
+silent_chunks_threshold = 20
+# vad_mode: 0 ~ 3: int 0: not aggressive filterring non-speech 3: most aggressive
+vad_mode = 3
+
+[whisper]
+use_flag = false
+# model: large-v2, medium
+model_size_or_path = large-v2
+device = cpu
+compute_type = int8
+beam_size = 3
+language = ja
+without_timestamps = true
