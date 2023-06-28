@@ -6,7 +6,7 @@
 ## リリース
 以下にあります。
 
-[https://github.com/navleorange/Aiwolf_audio_client/releases/tag/v1.0-alpha](https://github.com/navleorange/Aiwolf_audio_client/releases/tag/v1.0-alpha)
+[https://github.com/navleorange/Aiwolf_audio_client/releases/tag/v1.0.1-alpha](https://github.com/navleorange/Aiwolf_audio_client/releases/tag/v1.0.1-alpha)
 
 <br>
 
