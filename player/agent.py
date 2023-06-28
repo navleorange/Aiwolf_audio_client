@@ -88,6 +88,11 @@ class Agent:
         # start talk
         transcription.start(inifile=self.inifile, transcriber=self.transcriber, selected_device_index=self.device_index)
 
+        self.inform_info.reset_values()
+        self.inform_info.update_request(request=self.inform_info.request_class.talk_end)
+        self.inform_info.update_message(message="talk_end")
+        return self.convert_json()
+
     def vote(self) -> str:
 
         self.window.write_event_value(key=self.gui.check_vote, value=(self.gameInfo["targetNameList"],self.human_message))
@@ -171,7 +176,7 @@ class Agent:
         elif self.request == "DAILY_FINISH":
             self.daily_finish()
         elif self.request == "TALK":
-            self.talk()
+            return self.talk()
         elif self.request == "VOTE":
             return self.vote()
         elif self.request == "WHISPER":

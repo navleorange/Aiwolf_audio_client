@@ -49,12 +49,25 @@ class AudioTranscriber:
         self.inform_info.update_request(request=self.inform_info.request_class.convert_audio)
         self.inform_info.update_inform_format()
 
+        if time.time() >= self.time_limit:
+            self.inform_info.reset_values()
+            return
+
         self.connection.send(message=json.dumps(self.inform_format,separators=(",",":")))
 
     def listen_text(self) -> None:
+        time_out = self.time_limit - time.time()
+
+        print("listen timeout:" + str(time_out))
+
+        if time_out > 0:
+            self.connection.set_time_out = time_out
+        else:
+            return
+
         segments = self.connection.receive()
 
-        if segments != None and time.time() < self.time_limit:
+        if segments != None:
             segments = json.loads(segments)
             self.window.write_event_value(key=self.gui.update_comments, value=segments["humanMessage"])
 
@@ -87,6 +100,8 @@ class AudioTranscriber:
                     await asyncio.get_event_loop().run_in_executor(
                         executor, self.listen_text
                     )
+
+        self.connection.restore_time_out()
 
     def process_audio(self, in_data, frame_count, time_info, status):
         is_speech = self.vad_wrapper.is_speech(in_data)

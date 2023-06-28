@@ -52,6 +52,8 @@ class Client:
     
     def send(self, message:str) -> None:
         #message += "\n"
+        print("send")
+        print(message)
         self.socket.send(message.encode("utf-8"))
 
     def close(self) -> None:

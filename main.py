@@ -22,7 +22,9 @@ def execute_werewolf(agent:Agent, config_path:str):
     while agent.gameContinue:
 
         if len(agent.received) == 0:
+            print("prepare receive!")
             agent.parse_info(receive=connection.receive())
+            print("received!!!!!!!!!!")
         
         agent.get_info()
         message = agent.action()

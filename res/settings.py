@@ -50,9 +50,10 @@ class Request:
 		self.transcription = "transcription" # request convert audio to text
 		self.time_sync = "time_sync"	# request synchronize time
 		self.convert_audio = "convert_audio"
+		self.talk_end = "talk_end"
 
 		# {key:self variable value:RandomTalkAgent send format}
-		self.convert_request = {self.time_sync:"TIME_SYNCHRONIZE", self.transcription:"TRANSCRIPTION", self.convert_audio:"CONVERTAUDIO"}
+		self.convert_request = {self.time_sync:"TIME_SYNCHRONIZE", self.transcription:"TRANSCRIPTION", self.convert_audio:"CONVERTAUDIO",self.talk_end:"TALKEND"}
 
 		self._request_format = ""
 
